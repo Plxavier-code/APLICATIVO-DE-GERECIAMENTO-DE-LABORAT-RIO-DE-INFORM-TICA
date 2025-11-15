@@ -5,22 +5,21 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Identificação do projeto -->
+ 
     <groupId>org.example</groupId>
     <artifactId>ControleFila</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <!-- Configuração do Java -->
+  
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- DEPENDÊNCIAS -->
     <dependencies>
 
-        <!-- JUnit 5 -->
+     
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -30,11 +29,9 @@
 
     </dependencies>
 
-    <!-- PLUGINS DO MAVEN -->
     <build>
         <plugins>
-
-            <!-- Necessário para o JUnit 5 rodar corretamente -->
+         
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
