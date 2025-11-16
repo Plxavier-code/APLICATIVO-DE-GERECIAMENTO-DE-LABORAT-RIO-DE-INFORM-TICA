@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Define os itens que serão exibidos no Navigation Drawer (menu lateral)
+   da aplicação Android. Cada <item> representa uma opção do menu.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <!-- Item do menu: Perfil -->
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/icon_perfil"
+            android:title="Perfil" />
+        <!-- Item do menu: Reservas -->
+        <item
+            android:id="@+id/nav_reservas"
+            android:icon="@drawable/icon_fazer_reserva"
+            android:title="Reservas" />
+        <!-- Item do menu: Sair -->
+        <item
+            android:id="@+id/nav_sair"
+            android:icon="@drawable/icon_sair"
+            android:title="Sair" />
+    </group>
+</menu>

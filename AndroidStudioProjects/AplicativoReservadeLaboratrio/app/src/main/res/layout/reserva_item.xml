@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Layout para um único item (card) na lista de "Minhas Reservas".
+   Este layout será usado pelo ReservasAdapter.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#F5F5F5">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <!-- Informações da Reserva -->
+        <LinearLayout
+            android:id="@+id/layout_textos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/btn_edit_reserva">
+
+            <!-- Título -->
+            <TextView
+                android:id="@+id/text_lab_nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LAB - H401"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="16sp"/>
+
+            <!-- Informaçoes -->
+            <TextView
+                android:id="@+id/text_reserva_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Segunda: 16:30 às 18:30"
+                android:textColor="#333333"
+                android:textSize="14sp"/>
+
+            <!-- Descrição -->
+            <TextView
+                android:id="@+id/text_reserva_descricao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mini curso"
+                android:textColor="#555555"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <!-- Botão de Editar -->
+        <ImageButton
+            android:id="@+id/btn_edit_reserva"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/icon_editar"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:padding="0dp"
+            android:contentDescription="Editar Reserva"
+            app:tint="#000000" />
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>
