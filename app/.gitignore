@@ -1,0 +1,21 @@
+Ficheiros de Build e IDE
+
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+
+O MAIS IMPORTANTE: Ficheiro de serviços do Google
+
+Este ficheiro é SECRETO e não deve ser partilhado!
+
+google-services.json
+
+Ficheiros de Chaves (se você os tiver)
+
+*.keystore
+*.jks

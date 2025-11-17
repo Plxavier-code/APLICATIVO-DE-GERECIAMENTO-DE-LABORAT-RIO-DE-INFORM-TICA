@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvLabNome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="LAB - H401"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/tvLabCapacidade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Capacidade: 16 computadores"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvLabDescricao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Prédio H, 4º andar"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
