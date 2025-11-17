@@ -46,8 +46,8 @@ public class AgendamentoEstacaoActivity extends AppCompatActivity {
     private ProgressBar progressBarAgendamento;
 
     // Dados da Reserva
-    private String estacaoId;   // Variável renomeada
-    private String estacaoNome; // Variável renomeada
+    private String estacaoId;
+    private String estacaoNome;
     private String selectedDate;
     private String selectedTimeBlock;
 
