@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/icon_perfil"
+            android:title="Perfil" />
+        <item
+            android:id="@+id/nav_reservas"
+            android:icon="@drawable/icon_fazer_reserva"
+            android:title="Reservas" />
+        <item
+            android:id="@+id/nav_admin"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="Painel do Administrador" />
+        <item
+            android:id="@+id/nav_sair"
+            android:icon="@drawable/icon_sair"
+            android:title="Sair" />
+    </group>
+</menu>
