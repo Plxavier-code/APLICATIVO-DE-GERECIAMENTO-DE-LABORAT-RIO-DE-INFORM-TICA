@@ -5,13 +5,11 @@ public class SessionService {
     private final Map<String, Sessao> sessaoPorUsuario = new HashMap<>();
     private final List<Sessao> historico = new ArrayList<>();
 
-    // NOVAS ESTRUTURAS
     private Map<String, LinkedList<FilaDeEspera>> filasDeEspera = new HashMap<>();
     private Map<String, FilaDeEspera> filaPorUsuario = new HashMap<>();
     private List<FilaDeEspera> historicoFila = new ArrayList<>();
 
     public void iniciarSessao(Usuario usuario, String estacao) {
-        // 1. Verificações de estado do Usuário
         if (sessaoPorUsuario.containsKey(usuario.getId())) {
             System.out.println("❌ " + usuario.getNome() + " já possui uma sessão ativa.");
             return;
@@ -29,27 +27,22 @@ public class SessionService {
             return;
         }
         
-        // 3. A Estação está livre: Verifica a Fila de Espera (Prioridade de Fila)
         LinkedList<FilaDeEspera> fila = filasDeEspera.get(estacao);
         if (fila != null && !fila.isEmpty()) {
             FilaDeEspera proximo = fila.peek();
             
-            // Se houver fila, SOMENTE o primeiro pode iniciar a sessão.
             if (!proximo.getUsuario().getId().equals(usuario.getId())) {
                 System.out.println("⚠️ Estação " + estacao + " está livre, mas há usuários na fila de espera.");
                 System.out.println("   Prioridade: **" + proximo.getUsuario().getNome() + "** é o próximo. Você deve entrar na fila.");
                 
-                // Opção: forçar a entrada na fila, já que não é a vez dele.
                 entrarNaFila(usuario, estacao);
                 return;
             } else {
-                // É a vez do usuário. Remove-o da fila e inicia a sessão.
                 removerDaFila(usuario);
                 System.out.println("🎉 " + usuario.getNome() + " removido da fila. Sua vez chegou na estação " + estacao + ".");
             }
         }
         
-        // 4. Inicia a sessão (chegou aqui porque a estação está livre e o usuário é o próximo OU a fila está vazia).
         Sessao nova = new Sessao(usuario, estacao);
         sessoesAtivas.put(estacao, nova);
         sessaoPorUsuario.put(usuario.getId(), nova);
@@ -72,14 +65,9 @@ public class SessionService {
         System.out.println("✔ Sessão finalizada para " + usuario.getNome());
         System.out.println("   Tempo total: " + sessao.getDuracaoEmMinutos() + " minutos");
         
-        // Notifica o próximo da fila que a estação está livre
         notificarProximo(estacaoLiberada);
     }
     
-    // ----------------------------------------------------
-    // MÉTODOS DE FILA DE ESPERA
-    // ----------------------------------------------------
-
     public void entrarNaFila(Usuario usuario, String estacao) {
         if (filaPorUsuario.containsKey(usuario.getId())) {
             System.out.println("❌ " + usuario.getNome() + " já está na fila para a estação " + filaPorUsuario.get(usuario.getId()).getEstacao() + ".");
@@ -120,7 +108,6 @@ public class SessionService {
 
         String estacao = entrada.getEstacao();
         
-        // Se a pessoa que saiu era a primeira, notifica o novo primeiro.
         boolean eraPrimeiro = filasDeEspera.get(estacao).peek() != null && filasDeEspera.get(estacao).peek().getUsuario().getId().equals(usuario.getId());
 
         removerDaFila(usuario);
@@ -173,4 +160,5 @@ public class SessionService {
     public void setSessoesAtivas(Map<String, Sessao> sessoesAtivas) {
         this.sessoesAtivas = sessoesAtivas;
     }
+
 }
