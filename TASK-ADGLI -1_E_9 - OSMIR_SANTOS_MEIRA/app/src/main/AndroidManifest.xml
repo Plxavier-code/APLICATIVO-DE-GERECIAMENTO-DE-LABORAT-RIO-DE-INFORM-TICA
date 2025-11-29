@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Não precisamos da permissão de Internet por enquanto -->
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+        tools:targetApi="31">
+
+        <activity
+            android:name="ui.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="ui.MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="ui.OpcoesReservaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="ui.ListaLaboratoriosActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="ui.AgendamentoActivity"
+            android:exported="false" />
+
+        <!-- *** PASSO 4 ADICIONADO AQUI *** -->
+        <!-- Tela 6: Lista de Estações -->
+        <activity
+            android:name="ui.ListaEstacoesActivity"
+            android:exported="false" />
+
+        <!-- Tela 7: Agendamento de Estação -->
+        <activity
+            android:name="ui.AgendamentoEstacaoActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
