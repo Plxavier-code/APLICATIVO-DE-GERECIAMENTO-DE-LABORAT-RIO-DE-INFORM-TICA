@@ -11,6 +11,9 @@ public class Laboratorio {
     private String localizacao;
     private String urlImagem;
 
+    private boolean emManutencao;
+    private boolean disponivel;
+
     // Construtor
     public Laboratorio(String id, String nome, int capacidade, String localizacao, String urlImagem) {
         this.id = id;
@@ -18,6 +21,8 @@ public class Laboratorio {
         this.capacidade = capacidade;
         this.localizacao = localizacao;
         this.urlImagem = urlImagem;
+        this.emManutencao = false;
+        this.disponivel = true;
     }
 
     // Getters
@@ -35,5 +40,22 @@ public class Laboratorio {
     }
     public String getUrlImagem() {
         return urlImagem;
+    }
+
+    public boolean isEmManutencao() {
+        return emManutencao;
+    }
+
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    // Setters
+    public void setEmManutencao(boolean emManutencao) {
+        this.emManutencao = emManutencao;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
     }
 }

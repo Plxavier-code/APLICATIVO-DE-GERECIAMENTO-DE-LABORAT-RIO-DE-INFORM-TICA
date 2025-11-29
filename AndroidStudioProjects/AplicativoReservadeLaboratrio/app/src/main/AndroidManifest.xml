@@ -74,8 +74,33 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.AdminMainActivity"
+            android:exported="false"
+            android:label="Painel do Administrador" />
+
+        <activity
+            android:name=".ui.GerenciarLabsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GerenciarUsuariosActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GerenciarSoftwareActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ConsultarSenhasActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.EditarUsuarioActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ui.RealizarEstacaoActivity"
             android:exported="false" />
-    </application>
 
+    </application>
 </manifest>
