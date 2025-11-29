@@ -61,9 +61,6 @@ public class ReservaRepository {
                 return lab;
             }
         }
-        if ("est_12".equals(id)) {
-            return new Laboratorio("est_12", "Estação 12 - LAB - 403", 1, "Prédio H, 4º andar", "icon_estacao");
-        }
         return null;
     }
 
@@ -197,49 +194,55 @@ public class ReservaRepository {
     // --- Métodos Iniciais (Simulação de Dados) ---
 
     private void carregarLaboratoriosIniciais() {
+        // Laboratórios Principais
         laboratorios.add(new Laboratorio("lab_h401", "LAB - H401", 16, "Prédio H, 4º andar", "icon_lab401"));
         laboratorios.add(new Laboratorio("lab_h402", "LAB - H402", 15, "Prédio H, 4º andar", "icon_lab402"));
         laboratorios.add(new Laboratorio("lab_h403", "LAB - H403", 20, "Prédio H, 4º andar", "icon_lab403"));
         laboratorios.add(new Laboratorio("lab_h404", "LAB - H404", 20, "Prédio H, 4º andar", "icon_lab404"));
         laboratorios.add(new Laboratorio("lab_h406", "LAB - H406", 20, "Prédio H, 4º andar", "icon_lab406"));
         laboratorios.add(new Laboratorio("lab_h407", "LAB - H407", 20, "Prédio H, 4º andar", "icon_lab407"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - 403", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H401
+        laboratorios.add(new Laboratorio("est_h401_1", "Estação 1 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h401_5", "Estação 5 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h401_10", "Estação 10 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h401_12", "Estação 12 - LAB - H401", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H402
+        laboratorios.add(new Laboratorio("est_h402_1", "Estação 1 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h402_5", "Estação 5 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h402_10", "Estação 10 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h402_12", "Estação 12 - LAB - H402", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H403
+        laboratorios.add(new Laboratorio("est_h403_1", "Estação 1 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h403_5", "Estação 5 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h403_10", "Estação 10 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h403_12", "Estação 12 - LAB - H403", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H404
+        laboratorios.add(new Laboratorio("est_h404_1", "Estação 1 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h404_5", "Estação 5 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h404_10", "Estação 10 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h404_12", "Estação 12 - LAB - H404", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H406
+        laboratorios.add(new Laboratorio("est_h406_1", "Estação 1 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h406_5", "Estação 5 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h406_10", "Estação 10 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h406_12", "Estação 12 - LAB - H406", 1, "Prédio H, 4º andar", "icon_estacao"));
 
-        laboratorios.add(new Laboratorio("est_1", "Estação 1 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_5", "Estação 5 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_10", "Estação 10 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
-        laboratorios.add(new Laboratorio("est_12", "Estação 12 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
+        // Estações do H407
+        laboratorios.add(new Laboratorio("est_h407_1", "Estação 1 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h407_5", "Estação 5 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h407_10", "Estação 10 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
+        laboratorios.add(new Laboratorio("est_h407_12", "Estação 12 - LAB - H407", 1, "Prédio H, 4º andar", "icon_estacao"));
     }
 
     private void carregarReservasIniciais() {
         reservas.add(new Reserva("res_0", "lab_h401", "12/11/2025", 990, 1110, "Mini curso", "aluno_teste_123"));
         reservas.add(new Reserva("res_1", "lab_h407", "14/11/2025", 1110, 1320, "Linguagem de Programação II", "aluno_teste_123"));
-        reservas.add(new Reserva("res_2", "est_12", "16/11/2025", 1110, 1320, "Estudo", "aluno_teste_123"));
+        reservas.add(new Reserva("res_2", "est_h403_12", "16/11/2025", 1110, 1320, "Estudo", "aluno_teste_123"));
     }
 
     /**

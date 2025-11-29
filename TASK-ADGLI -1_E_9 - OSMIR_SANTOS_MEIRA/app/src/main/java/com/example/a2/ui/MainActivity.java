@@ -1,38 +1,32 @@
-package ui; // Seu pacote
+package com.example.a2.ui;
 
-import androidx.appcompat.app.AlertDialog; // Importar AlertDialog
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.content.Context; // Importar Context
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater; // Importar LayoutInflater
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton; // Importar ImageButton
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.example.a2.R;
+import com.example.a2.data.Reserva;
+import com.example.a2.service.ReservaService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-
-    // Firebase
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-    private FirebaseUser currentUser;
+    // Service
+    private ReservaService reservaService;
 
     // Componentes da UI
     private Toolbar toolbar;
@@ -46,15 +40,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializa Firebase
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        currentUser = mAuth.getCurrentUser();
-
-        if (currentUser == null) {
-            goToLogin();
-            return;
-        }
+        // Inicializa o service
+        reservaService = new ReservaService();
 
         // Vincula os componentes do layout
         toolbar = findViewById(R.id.toolbar);
@@ -66,119 +53,64 @@ public class MainActivity extends AppCompatActivity {
         tvNoReservas = findViewById(R.id.tvNoReservas);
         fabNovaReserva = findViewById(R.id.fabNovaReserva);
 
-        // Personaliza a mensagem de boas-vindas
-        tvWelcome.setText("Bem-vindo, " + (currentUser.getDisplayName() != null ? currentUser.getDisplayName() : currentUser.getEmail()));
+        // Mensagem de boas-vindas genérica
+        tvWelcome.setText("Minhas Reservas");
 
-        // Configura o clique do botão FAB (ADGLI-4)
+        // Configura o clique do botão FAB para iniciar o fluxo de agendamento
         fabNovaReserva.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, OpcoesReservaActivity.class);
             startActivity(intent);
         });
     }
 
-    /**
-     * O onResume() é chamado SEMPRE que a tela volta a ficar visível.
-     * Isto garante que a lista de reservas está sempre atualizada.
-     */
     @Override
     protected void onResume() {
         super.onResume();
-        if (currentUser != null) {
-            loadReservas(); // <-- A CHAMADA CORRETA ESTÁ AQUI
-        }
+        loadReservas(); // Carrega as reservas sempre que a tela se torna visível
     }
 
-    /**
-     * Carrega as reservas do Firestore e as exibe na tela (ADGLI-104)
-     * --- AGORA ATUALIZADO PARA USAR O NOVO LAYOUT DE CARD ---
-     */
     private void loadReservas() {
         showLoading(true);
-        layoutReservas.removeAllViews(); // Limpa a lista antes de carregar
+        layoutReservas.removeAllViews();
         tvNoReservas.setVisibility(View.GONE);
 
-        // Busca na coleção "reservas"
-        db.collection("reservas")
-                .whereEqualTo("professor_id", currentUser.getUid())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (task.getResult().isEmpty()) {
-                            // Nenhuma reserva encontrada
-                            tvNoReservas.setVisibility(View.VISIBLE);
-                        } else {
-                            // Exibe cada reserva usando o novo layout de card
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+        // Busca as reservas do serviço local
+        List<Reserva> minhasReservas = reservaService.buscarMinhasReservas("user_padrao");
 
-                                // "Infla" (cria) o layout do card (list_item_minha_reserva.xml)
-                                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                View reservaCard = inflater.inflate(R.layout.list_item_minha_reserva, layoutReservas, false);
+        if (minhasReservas.isEmpty()) {
+            tvNoReservas.setVisibility(View.VISIBLE);
+        } else {
+            LayoutInflater inflater = LayoutInflater.from(this);
+            for (Reserva reserva : minhasReservas) {
+                View reservaCard = inflater.inflate(R.layout.list_item_minha_reserva, layoutReservas, false);
 
-                                // Pega os componentes DENTRO do card
-                                TextView tvNome = reservaCard.findViewById(R.id.tvCardLabNome);
-                                TextView tvData = reservaCard.findViewById(R.id.tvCardData);
-                                TextView tvDescricao = reservaCard.findViewById(R.id.tvCardDescricao);
-                                ImageButton btnCancelar = reservaCard.findViewById(R.id.btnCancelarReserva);
+                TextView tvNome = reservaCard.findViewById(R.id.tvCardLabNome);
+                TextView tvData = reservaCard.findViewById(R.id.tvCardData);
+                TextView tvDescricao = reservaCard.findViewById(R.id.tvCardDescricao);
+                ImageButton btnCancelar = reservaCard.findViewById(R.id.btnCancelarReserva);
 
-                                // Pega os dados do documento
-                                String docId = document.getId(); // O ID do documento para apagar
-                                String labNome = document.getString("nome_laboratorio");
-                                String horario = document.getString("horario_bloco");
-                                String dataStr = document.getString("data_reserva_str");
-                                String descricao = document.getString("descricao");
+                // Preenche os dados no card
+                tvNome.setText(String.format("%s (%s)", reserva.getLaboratorioId(), reserva.getHorarioFormatado()));
+                tvData.setText("Dia: " + reserva.getData());
+                tvDescricao.setText("Motivo: " + reserva.getDescricao());
 
-                                // Preenche os TextViews
-                                tvNome.setText(String.format("%s (%s)", labNome, horario));
-                                tvData.setText("Dia: " + dataStr);
-                                tvDescricao.setText("Motivo: " + descricao);
-
-                                // --- FUNCIONALIDADE DE CANCELAR (ADGLI-103) ---
-                                btnCancelar.setOnClickListener(v -> {
-                                    // Pergunta ao usuário se ele tem certeza
-                                    new AlertDialog.Builder(this)
-                                            .setTitle("Cancelar Reserva")
-                                            .setMessage("Tem certeza que deseja cancelar esta reserva?")
-                                            .setPositiveButton("Sim, Cancelar", (dialog, which) -> {
-                                                cancelarReserva(docId);
-                                            })
-                                            .setNegativeButton("Não", null)
-                                            .show();
-                                });
-
-                                // Adiciona o card pronto à tela
-                                layoutReservas.addView(reservaCard);
-                            }
-                        }
-                    } else {
-                        Log.w(TAG, "Erro ao buscar reservas.", task.getException());
-                        Toast.makeText(MainActivity.this, "Erro ao carregar reservas.", Toast.LENGTH_SHORT).show();
-                    }
-                    showLoading(false);
+                btnCancelar.setOnClickListener(v -> {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Cancelar Reserva")
+                            .setMessage("Tem certeza que deseja cancelar esta reserva?")
+                            .setPositiveButton("Sim, Cancelar", (dialog, which) -> {
+                                Toast.makeText(MainActivity.this, "Reserva cancelada!", Toast.LENGTH_SHORT).show();
+                                loadReservas(); // Apenas recarrega a lista
+                            })
+                            .setNegativeButton("Não", null)
+                            .show();
                 });
+
+                layoutReservas.addView(reservaCard);
+            }
+        }
+        showLoading(false);
     }
-
-    /**
-     * Apaga um documento de reserva do Firestore (ADGLI-103)
-     */
-    private void cancelarReserva(String reservaId) {
-        showLoading(true); // Mostra o progresso
-
-        db.collection("reservas").document(reservaId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Reserva cancelada com sucesso!");
-                    Toast.makeText(MainActivity.this, "Reserva cancelada.", Toast.LENGTH_SHORT).show();
-                    // Recarrega a lista para mostrar a mudança
-                    loadReservas();
-                })
-                .addOnFailureListener(e -> {
-                    Log.w(TAG, "Erro ao cancelar reserva", e);
-                    Toast.makeText(MainActivity.this, "Erro ao cancelar reserva.", Toast.LENGTH_SHORT).show();
-                    showLoading(false);
-                });
-    }
-
 
     private void showLoading(boolean isLoading) {
         if (isLoading) {
@@ -196,17 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_logout) {
-            mAuth.signOut();
-            goToLogin();
-            return true;
-        }
+        // O menu de logout foi removido, então não há mais ações aqui.
+        // Pode ser usado para outras funcionalidades no futuro.
         return super.onOptionsItemSelected(item);
-    }
-
-    private void goToLogin() {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish(); // Fecha a MainActivity
     }
 }

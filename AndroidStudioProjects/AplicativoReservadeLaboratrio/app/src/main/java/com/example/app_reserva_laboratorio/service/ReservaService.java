@@ -1,4 +1,4 @@
-spackage com.example.app_reserva_laboratorio.service;
+package com.example.app_reserva_laboratorio.service;
 
 import com.example.app_reserva_laboratorio.data.Laboratorio;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
