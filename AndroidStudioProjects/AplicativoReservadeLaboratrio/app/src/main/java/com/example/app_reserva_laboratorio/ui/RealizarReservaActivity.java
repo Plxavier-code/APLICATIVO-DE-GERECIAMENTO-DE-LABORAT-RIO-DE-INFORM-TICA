@@ -21,14 +21,11 @@ import com.example.app_reserva_laboratorio.data.Reserva;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
 import com.example.app_reserva_laboratorio.R;
 import com.example.app_reserva_laboratorio.service.ReservaService;
+// IMPORT ADICIONADO
+import com.example.app_reserva_laboratorio.util.NotificationHelper;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
-/**
- * Activity responsável por permitir ao usuário realizar uma reserva geral
- * (não associada a uma estação específica).
- * Inclui seleção de data, horário, descrição e uso de Navigation Drawer.
- */
 public class RealizarReservaActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     // Componentes do menu lateral (Navigation Drawer)
     private DrawerLayout drawerLayout;
@@ -134,17 +131,13 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
                     return;
                 }
 
-                // Dados "Chumbados"
-                String labId = "lab_h401";
                 String alunoId = "aluno_teste_123";
 
                 try {
                     // Converter os dados da tela
-                    // Pega o repositório para gerar um novo ID
                     ReservaRepository repository = ReservaRepository.getInstance();
                     String novoId = repository.getProximoIdReserva();
 
-                    // Converte a string "19:00 - 20:00" em minutos
                     String[] partesHorario = horarioSelecionado.split(" - ");
                     String[] inicioSplit = partesHorario[0].split(":");
                     String[] fimSplit = partesHorario[1].split(":");
@@ -152,7 +145,6 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
                     int minutoInicio = (Integer.parseInt(inicioSplit[0]) * 60) + Integer.parseInt(inicioSplit[1]);
                     int minutoFim = (Integer.parseInt(fimSplit[0]) * 60) + Integer.parseInt(fimSplit[1]);
 
-                    // Montar o objeto reserva
                     Reserva novaReserva = new Reserva(
                             novoId,
                             labIdSelecionado,
@@ -163,23 +155,22 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
                             alunoId
                     );
 
-                    // Chamar o service
                     boolean sucesso = reservaService.FazerReserva(novaReserva);
 
-                    // Responder ao usuário
                     if (sucesso) {
                         Toast.makeText(RealizarReservaActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
-                        // Volta para a tela principal
+                        
+                        // CHAMA A NOTIFICAÇÃO
+                        NotificationHelper.notificarProfessorSobreReserva(getApplicationContext(), novaReserva);
+
                         Intent intent = new Intent(RealizarReservaActivity.this, MainActivity.class);
                         startActivity(intent);
-                        finish(); // Fecha esta tela
+                        finish();
                     } else {
-                        // Se o service retornou 'false', é porque deu conflito
                         Toast.makeText(RealizarReservaActivity.this, "ERRO: Este horário já está reservado!", Toast.LENGTH_LONG).show();
                     }
 
                 } catch (Exception e) {
-                    // Caso algo dê errado na conversão do horário
                     Toast.makeText(RealizarReservaActivity.this, "Erro ao processar o horário.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -198,7 +189,6 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
         this.getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    // Ações ao clicar em um item do menu lateral
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

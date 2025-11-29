@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app_reserva_laboratorio.R;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
 import com.example.app_reserva_laboratorio.data.Usuario;
+import com.example.app_reserva_laboratorio.session.SessionManager;
+
 import java.util.List;
 
 public class GerenciarUsuariosActivity extends AppCompatActivity implements AdminUsuariosAdapter.OnUsuarioAdminClickListener {
@@ -21,6 +23,14 @@ public class GerenciarUsuariosActivity extends AppCompatActivity implements Admi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // VERIFICAÇÃO DE SEGURANÇA
+        if (!SessionManager.getInstance().isProfessor()) {
+            Toast.makeText(this, "Acesso negado. Apenas professores podem gerenciar usuários.", Toast.LENGTH_LONG).show();
+            finish(); // Fecha a activity imediatamente se não for professor
+            return;   // Impede a execução do resto do método
+        }
+
         setContentView(R.layout.activity_gerenciar_usuarios);
 
         reservaRepository = ReservaRepository.getInstance();
@@ -39,7 +49,11 @@ public class GerenciarUsuariosActivity extends AppCompatActivity implements Admi
     @Override
     protected void onResume() {
         super.onResume();
+        // A verificação de segurança já garante que o usuário é professor
         if (adapter != null) {
+            // Atualiza a lista caso um usuário tenha sido editado
+            listaDeUsuarios.clear();
+            listaDeUsuarios.addAll(reservaRepository.getUsuarios());
             adapter.notifyDataSetChanged();
         }
     }
