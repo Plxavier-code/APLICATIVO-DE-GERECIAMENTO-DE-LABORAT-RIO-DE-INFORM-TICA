@@ -1,7 +1,5 @@
 plugins {
     id 'com.android.application'
-    // 1. Adiciona o plugin do Google Services
-    id 'com.google.gms.google-services'
 }
 
 android {
@@ -38,15 +36,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    // 2. Adicione as dependências do Firebase (BOM - Bill of Materials)
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
-
-    // 3. Adicione as bibliotecas específicas que você precisa para este módulo
-
-    // Para Autenticação (Login, Cadastro) - ADGLI-2
-    implementation 'com.google.firebase:firebase-auth'
-
-    // Para o Banco de Dados Firestore (onde vamos salvar os dados do professor) - ADGLI-2
-    implementation 'com.google.firebase:firebase-firestore'
 }
