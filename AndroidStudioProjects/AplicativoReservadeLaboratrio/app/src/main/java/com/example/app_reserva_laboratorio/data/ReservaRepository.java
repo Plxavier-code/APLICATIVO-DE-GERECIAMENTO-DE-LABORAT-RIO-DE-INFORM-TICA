@@ -140,9 +140,9 @@ public class ReservaRepository {
     }
 
     private void carregarUsuariosIniciais() {
-        addUsuario(new Usuario("aluno_teste_123", "Aluno Teste", "aluno@ifba.edu.br", "Aluno", "2022123456"));
-        addUsuario(new Usuario("prof_teste_456", "Professor Teste", "prof@ifba.edu.br", "Professor", "Sistemas de Informação"));
-        addUsuario(new Usuario("aluno_outro_789", "Outra Aluna", "outra@ifba.edu.br", "Aluno", "2021987654"));
+        addUsuario(new Usuario("aluno_teste_123", "Aluno Teste", "aluno@ifba.edu.br", Tipo.ALUNO, "2022123456"));
+        addUsuario(new Usuario("prof_teste_456", "Professor Teste", "prof@ifba.edu.br", Tipo.PROFESSOR, "Sistemas de Informação"));
+        addUsuario(new Usuario("aluno_outro_789", "Outra Aluna", "outra@ifba.edu.br", Tipo.ALUNO, "2021987654"));
     }
 
     // Métodos helper para popular os mapas

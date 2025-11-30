@@ -1,5 +1,6 @@
 package com.example.app_reserva_laboratorio.service;
 
+import com.example.app_reserva_laboratorio.data.Tipo; // IMPORT CORRIGIDO
 import com.example.app_reserva_laboratorio.data.Usuario;
 
 import java.util.ArrayList;
@@ -14,9 +15,10 @@ public class UsuarioService {
 
     // Bloco estático para popular nossa "base de dados" de usuários de exemplo.
     static {
-        usuarios.add(new Usuario("1", "Administrador", "admin@if.com", Usuario.Tipo.ADMINISTRADOR, "TI"));
-        usuarios.add(new Usuario("2", "Professor Fulano", "prof@if.com", Usuario.Tipo.PROFESSOR, "Informática"));
-        usuarios.add(new Usuario("3", "Aluno Ciclano", "aluno@if.com", Usuario.Tipo.ALUNO, "20231INFO001"));
+        // USO CORRIGIDO DO ENUM
+        usuarios.add(new Usuario("1", "Administrador", "admin@if.com", Tipo.ADMINISTRADOR, "TI"));
+        usuarios.add(new Usuario("2", "Professor Fulano", "prof@if.com", Tipo.PROFESSOR, "Informática"));
+        usuarios.add(new Usuario("3", "Aluno Ciclano", "aluno@if.com", Tipo.ALUNO, "20231INFO001"));
     }
 
     /**

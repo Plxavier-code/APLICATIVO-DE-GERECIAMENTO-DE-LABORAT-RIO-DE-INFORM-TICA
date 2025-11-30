@@ -23,7 +23,9 @@ import com.example.app_reserva_laboratorio.R;
 import com.example.app_reserva_laboratorio.data.Laboratorio;
 import com.example.app_reserva_laboratorio.data.Reserva;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
+import com.example.app_reserva_laboratorio.data.Usuario;
 import com.example.app_reserva_laboratorio.service.ReservaService;
+import com.example.app_reserva_laboratorio.session.SessionManager;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 
 public class RealizarEstacaoActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private ImageButton menuButton;
     private ImageButton backButton;
 
@@ -40,7 +43,6 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
     private TextInputEditText editTextDescricao;
     private Button btnConfirmarReserva;
 
-    // NOVOS COMPONENTES
     private RecyclerView recyclerViewEstacoes;
     private EstacaoAdapter estacaoAdapter;
 
@@ -61,8 +63,9 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
             labIdSelecionado = "lab_h403"; // Fallback
         }
 
-        setupNavigationDrawer();
         setupViews();
+        setupNavigationDrawer();
+        setupHeader(); // ATUALIZA O CABEÇALHO
         setupHorarioSpinner();
         setupCalendar();
         setupEstacaoRecyclerView();
@@ -70,6 +73,8 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
     }
 
     private void setupViews() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         menuButton = findViewById(R.id.menu_button);
         backButton = findViewById(R.id.back_button);
         calendarView = findViewById(R.id.calendar_view);
@@ -83,14 +88,22 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
     }
 
     private void setupNavigationDrawer() {
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_reservas);
+    }
+
+    private void setupHeader() {
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvUserName = headerView.findViewById(R.id.nav_user_name);
+
+        Usuario usuarioLogado = SessionManager.getInstance().getUsuarioLogado();
+        if (usuarioLogado != null) {
+            tvUserName.setText(usuarioLogado.getNome());
+        } else {
+            tvUserName.setText("Usuário não identificado");
+        }
     }
 
     private void setupEstacaoRecyclerView() {
-        // 1. Encontra o nome do laboratório pai
         Laboratorio labPai = ReservaRepository.getInstance().getLaboratorioById(labIdSelecionado);
         if (labPai == null) {
             Toast.makeText(this, "Laboratório principal não encontrado.", Toast.LENGTH_SHORT).show();
@@ -99,14 +112,12 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
         TextView textLabNome = findViewById(R.id.text_lab_nome);
         textLabNome.setText("Reservar Estação em: " + labPai.getNome());
 
-        // 2. Filtra a lista para pegar apenas as estações daquele laboratório
         List<Laboratorio> todasAsEstacoes = ReservaRepository.getInstance().getLaboratorios();
         List<Laboratorio> estacoesDoLab = todasAsEstacoes.stream()
                 .filter(l -> l.getNome().startsWith("Estação") && l.getNome().contains(labPai.getNome()))
                 .collect(Collectors.toList());
 
-        // 3. Configura o RecyclerView e o Adapter
-        recyclerViewEstacoes.setLayoutManager(new GridLayoutManager(this, 4)); // Exibe 4 colunas
+        recyclerViewEstacoes.setLayoutManager(new GridLayoutManager(this, 4));
         estacaoAdapter = new EstacaoAdapter(this, estacoesDoLab);
         recyclerViewEstacoes.setAdapter(estacaoAdapter);
     }
@@ -130,39 +141,30 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
             String descricao = editTextDescricao.getText().toString();
             Laboratorio estacaoSelecionada = estacaoAdapter.getEstacaoSelecionada();
 
-            // Validações
-            if (dataSelecionada == null || dataSelecionada.isEmpty()) {
-                Toast.makeText(this, "Por favor, selecione uma data", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (estacaoSelecionada == null) {
-                Toast.makeText(this, "Por favor, selecione uma estação", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (horarioSelecionado.equals("Selecione o horário")) {
-                Toast.makeText(this, "Por favor, selecione um horário", Toast.LENGTH_SHORT).show();
+            if (dataSelecionada == null || estacaoSelecionada == null || horarioSelecionado.equals("Selecione o horário")) {
+                Toast.makeText(this, "Selecione data, estação e horário", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            String alunoId = "aluno_teste_123";
+            Usuario usuario = SessionManager.getInstance().getUsuarioLogado();
+            if (usuario == null) {
+                Toast.makeText(this, "Erro de sessão. Faça login novamente.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             try {
                 String novoId = ReservaRepository.getInstance().getProximoIdReserva();
-
                 String[] partesHorario = horarioSelecionado.split(" - ");
-                String[] inicioSplit = partesHorario[0].split(":");
-                String[] fimSplit = partesHorario[1].split(":");
-                int minutoInicio = (Integer.parseInt(inicioSplit[0]) * 60) + Integer.parseInt(inicioSplit[1]);
-                int minutoFim = (Integer.parseInt(fimSplit[0]) * 60) + Integer.parseInt(fimSplit[1]);
+                int minutoInicio = (Integer.parseInt(partesHorario[0].split(":")[0]) * 60);
+                int minutoFim = (Integer.parseInt(partesHorario[1].split(":")[0]) * 60);
 
-                Reserva novaReserva = new Reserva(novoId, estacaoSelecionada.getId(), dataSelecionada, minutoInicio, minutoFim, descricao, alunoId);
+                Reserva novaReserva = new Reserva(novoId, estacaoSelecionada.getId(), dataSelecionada, minutoInicio, minutoFim, descricao, usuario.getId());
 
                 boolean sucesso = reservaService.FazerReserva(novaReserva);
 
                 if (sucesso) {
                     Toast.makeText(this, "Reserva de estação realizada com sucesso!", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(this, MainActivity.class));
                     finish();
                 } else {
                     Toast.makeText(this, "ERRO: Este horário/estação já está reservado!", Toast.LENGTH_LONG).show();
@@ -176,13 +178,19 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_perfil) {
-            Toast.makeText(this, "Clicou em Perfil", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_reservas) {
-            startActivity(new Intent(this, MainActivity.class));
+        if (id == R.id.nav_admin) {
+            if (SessionManager.getInstance().isProfessor()) {
+                startActivity(new Intent(this, AdminMainActivity.class));
+            } else {
+                Toast.makeText(this, "Acesso negado.", Toast.LENGTH_SHORT).show();
+            }
         } else if (id == R.id.nav_sair) {
-            Toast.makeText(this, "Saindo...", Toast.LENGTH_SHORT).show();
+            SessionManager.getInstance().logout();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

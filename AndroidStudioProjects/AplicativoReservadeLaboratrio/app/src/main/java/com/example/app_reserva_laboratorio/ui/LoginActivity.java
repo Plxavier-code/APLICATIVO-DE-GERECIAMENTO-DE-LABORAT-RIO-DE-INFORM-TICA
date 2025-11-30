@@ -3,6 +3,7 @@ package com.example.app_reserva_laboratorio.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper; // IMPORT ADICIONADO
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -11,8 +12,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.app_reserva_laboratorio.R;
+import com.example.app_reserva_laboratorio.data.Tipo;
 import com.example.app_reserva_laboratorio.data.Usuario;
-import com.example.app_reserva_laboratorio.service.SessionManager;
+import com.example.app_reserva_laboratorio.session.SessionManager;
 import com.example.app_reserva_laboratorio.service.UsuarioService;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -51,28 +53,26 @@ public class LoginActivity extends AppCompatActivity {
 
         showLoading(true);
 
-        new Handler().postDelayed(() -> {
+        // USO CORRIGIDO E MODERNO DO HANDLER
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Usuario usuario = usuarioService.autenticar(email, password);
 
             if (usuario != null) {
-                // Salva o usuário na sessão
                 SessionManager.getInstance().login(usuario);
 
-                // Redireciona com base no tipo de usuário
                 Intent intent;
-                if (usuario.getTipo() == Usuario.Tipo.ADMINISTRADOR) {
+                if (usuario.getTipo() == Tipo.ADMINISTRADOR) {
                     intent = new Intent(LoginActivity.this, AdminMainActivity.class);
                 } else {
-                    // Professores e Alunos vão para a mesma tela principal
                     intent = new Intent(LoginActivity.this, MainActivity.class);
                 }
                 startActivity(intent);
-                finish(); // Fecha a tela de login para não poder voltar
+                finish();
             } else {
                 Toast.makeText(LoginActivity.this, "E-mail ou senha inválidos", Toast.LENGTH_LONG).show();
             }
             showLoading(false);
-        }, 1000); // Delay de 1 segundo para simular a autenticação
+        }, 1000); // Delay para simular a autenticação
     }
 
     private void showLoading(boolean isLoading) {

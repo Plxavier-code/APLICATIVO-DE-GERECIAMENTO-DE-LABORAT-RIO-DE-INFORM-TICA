@@ -9,36 +9,33 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.activity.OnBackPressedCallback;
 
+import com.example.app_reserva_laboratorio.R;
 import com.example.app_reserva_laboratorio.data.Reserva;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
-import com.example.app_reserva_laboratorio.R;
+import com.example.app_reserva_laboratorio.data.Usuario;
 import com.example.app_reserva_laboratorio.service.ReservaService;
-// IMPORT ADICIONADO
+import com.example.app_reserva_laboratorio.session.SessionManager;
 import com.example.app_reserva_laboratorio.util.NotificationHelper;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class RealizarReservaActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    // Componentes do menu lateral (Navigation Drawer)
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private ImageButton menuButton;
     private ImageButton backButton;
-
-    // Componentes principais da tela
     private CalendarView calendarView;
     private Spinner spinnerHorario;
     private TextInputEditText editTextDescricao;
     private Button btnConfirmarReserva;
-
-
     private ReservaService reservaService;
     private String dataSelecionada;
     private String labIdSelecionado;
@@ -48,145 +45,100 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realizar_reserva);
 
-        // Inicializa o "Back-end"
         reservaService = new ReservaService();
 
-        // Pega o ID do laboratório que foi clicado na tela anterior
         labIdSelecionado = getIntent().getStringExtra("LAB_ID");
         if (labIdSelecionado == null || labIdSelecionado.isEmpty()) {
             Toast.makeText(this, "Erro: ID do laboratório não recebido.", Toast.LENGTH_LONG).show();
             labIdSelecionado = "lab_h401";
         }
 
-        // Configuração do Navigation Drawer (menu lateral)
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_reservas);
 
-        // Lógica para os botões do cabeçalho
+        setupHeader();
+
         menuButton = findViewById(R.id.menu_button);
         backButton = findViewById(R.id.back_button);
 
-        // Abre o menu lateral ao clicar no botão de menu
-        menuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
+        menuButton.setOnClickListener(v -> {
+            if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
-        // Fecha a Activity ao clicar no botão voltar
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        backButton.setOnClickListener(v -> finish());
 
-        // Lógica dos componentes da tela
         calendarView = findViewById(R.id.calendar_view);
         spinnerHorario = findViewById(R.id.spinner_horario);
         editTextDescricao = findViewById(R.id.edit_text_descricao);
         btnConfirmarReserva = findViewById(R.id.btn_confirmar_reserva);
 
-        // Configura o Spinner - Horário
-        String[] horarios = new String[]{
-                "Selecione o horário",
-                "18:00 - 19:00",
-                "19:00 - 20:00",
-                "20:00 - 21:00",
-                "21:00 - 22:00"
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, horarios);
+        String[] horarios = {"Selecione o horário", "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00", "21:00 - 22:00"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, horarios);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerHorario.setAdapter(adapter);
 
-        // Listener para seleção de data no calendário
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                dataSelecionada = dayOfMonth + "/" + (month + 1) + "/" + year;
-                Toast.makeText(RealizarReservaActivity.this, "Data selecionada: " + dataSelecionada, Toast.LENGTH_SHORT).show();
-            }
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            dataSelecionada = dayOfMonth + "/" + (month + 1) + "/" + year;
         });
 
-        // Configura o clique do botão Confirmar Reserva
-        btnConfirmarReserva.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String horarioSelecionado = spinnerHorario.getSelectedItem().toString();
-                String descricao = editTextDescricao.getText().toString();
+        btnConfirmarReserva.setOnClickListener(v -> {
+            String horarioSelecionado = spinnerHorario.getSelectedItem().toString();
+            String descricao = editTextDescricao.getText().toString();
 
-                // Validações
-                if (dataSelecionada == null) {
-                    Toast.makeText(RealizarReservaActivity.this, "Por favor, selecione uma data", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (horarioSelecionado.equals("Selecione o horário")) {
-                    Toast.makeText(RealizarReservaActivity.this, "Por favor, selecione um horário", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                String alunoId = "aluno_teste_123";
-
-                try {
-                    // Converter os dados da tela
-                    ReservaRepository repository = ReservaRepository.getInstance();
-                    String novoId = repository.getProximoIdReserva();
-
-                    String[] partesHorario = horarioSelecionado.split(" - ");
-                    String[] inicioSplit = partesHorario[0].split(":");
-                    String[] fimSplit = partesHorario[1].split(":");
-
-                    int minutoInicio = (Integer.parseInt(inicioSplit[0]) * 60) + Integer.parseInt(inicioSplit[1]);
-                    int minutoFim = (Integer.parseInt(fimSplit[0]) * 60) + Integer.parseInt(fimSplit[1]);
-
-                    Reserva novaReserva = new Reserva(
-                            novoId,
-                            labIdSelecionado,
-                            dataSelecionada,
-                            minutoInicio,
-                            minutoFim,
-                            descricao,
-                            alunoId
-                    );
-
-                    boolean sucesso = reservaService.FazerReserva(novaReserva);
-
-                    if (sucesso) {
-                        Toast.makeText(RealizarReservaActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
-                        
-                        // CHAMA A NOTIFICAÇÃO
-                        NotificationHelper.notificarProfessorSobreReserva(getApplicationContext(), novaReserva);
-
-                        Intent intent = new Intent(RealizarReservaActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(RealizarReservaActivity.this, "ERRO: Este horário já está reservado!", Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (Exception e) {
-                    Toast.makeText(RealizarReservaActivity.this, "Erro ao processar o horário.", Toast.LENGTH_SHORT).show();
-                }
+            if (dataSelecionada == null || horarioSelecionado.equals("Selecione o horário")) {
+                Toast.makeText(RealizarReservaActivity.this, "Selecione data e horário", Toast.LENGTH_SHORT).show();
+                return;
             }
-        });
-        // Configuração do botão Voltar
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                } else {
+
+            Usuario usuario = SessionManager.getInstance().getUsuarioLogado();
+            if (usuario == null) {
+                Toast.makeText(this, "Erro de sessão. Faça login novamente.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                ReservaRepository repository = ReservaRepository.getInstance();
+                String novoId = repository.getProximoIdReserva();
+
+                String[] partesHorario = horarioSelecionado.split(" - ");
+                String[] inicioSplit = partesHorario[0].split(":");
+                String[] fimSplit = partesHorario[1].split(":");
+                int minutoInicio = (Integer.parseInt(inicioSplit[0]) * 60) + Integer.parseInt(inicioSplit[1]);
+                int minutoFim = (Integer.parseInt(fimSplit[0]) * 60) + Integer.parseInt(fimSplit[1]);
+
+                Reserva novaReserva = new Reserva(novoId, labIdSelecionado, dataSelecionada, minutoInicio, minutoFim, descricao, usuario.getId());
+
+                boolean sucesso = reservaService.FazerReserva(novaReserva);
+
+                if (sucesso) {
+                    Toast.makeText(RealizarReservaActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
+                    // CORREÇÃO: Usando o nome de método correto e genérico
+                    NotificationHelper.notificarConfirmacao(getApplicationContext(), novaReserva);
+                    Intent intent = new Intent(RealizarReservaActivity.this, MainActivity.class);
+                    startActivity(intent);
                     finish();
+                } else {
+                    Toast.makeText(RealizarReservaActivity.this, "ERRO: Este horário já está reservado!", Toast.LENGTH_LONG).show();
                 }
+            } catch (Exception e) {
+                Toast.makeText(RealizarReservaActivity.this, "Erro ao processar o horário.", Toast.LENGTH_SHORT).show();
             }
-        };
-        this.getOnBackPressedDispatcher().addCallback(this, callback);
+        });
+    }
+
+    private void setupHeader() {
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvUserName = headerView.findViewById(R.id.nav_user_name);
+        
+        Usuario usuarioLogado = SessionManager.getInstance().getUsuarioLogado();
+        if (usuarioLogado != null) {
+            tvUserName.setText(usuarioLogado.getNome());
+        } else {
+            tvUserName.setText("Usuário não identificado");
+        }
     }
 
     @Override
@@ -195,13 +147,19 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
 
         if (id == R.id.nav_perfil) {
             Toast.makeText(this, "Clicou em Perfil", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_reservas) {
-            Intent intent = new Intent(RealizarReservaActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+        } else if (id == R.id.nav_admin) {
+            if (SessionManager.getInstance().isProfessor()) {
+                startActivity(new Intent(this, AdminMainActivity.class));
+            } else {
+                Toast.makeText(this, "Acesso negado.", Toast.LENGTH_SHORT).show();
+            }
         } else if (id == R.id.nav_sair) {
-            Toast.makeText(this, "Saindo", Toast.LENGTH_SHORT).show();
+            SessionManager.getInstance().logout();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
+        
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }

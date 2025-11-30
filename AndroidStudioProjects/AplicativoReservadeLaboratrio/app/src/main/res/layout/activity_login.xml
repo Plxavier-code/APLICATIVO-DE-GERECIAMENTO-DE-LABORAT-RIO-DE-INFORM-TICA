@@ -23,11 +23,11 @@
 
             <ImageView
                 android:id="@+id/imgLogo"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:contentDescription="Logo do Instituto Federal"
-                android:src="@drawable/if_logo"
-                android:layout_marginBottom="24dp"/>
+                android:layout_width="150dp" 
+                android:layout_height="150dp"
+                android:contentDescription="Logo do Instituto Federal da Bahia"
+                android:src="@drawable/logo_ifba" 
+                android:layout_marginBottom="32dp"/>
 
             <TextView
                 android:id="@+id/tvLoginTitle"

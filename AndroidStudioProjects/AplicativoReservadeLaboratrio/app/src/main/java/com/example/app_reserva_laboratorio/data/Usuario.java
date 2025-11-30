@@ -2,21 +2,14 @@ package com.example.app_reserva_laboratorio.data;
 
 /**
  * Modelo (Model) que representa um Usuário.
- * Agora utiliza um Enum para o tipo de usuário para maior segurança e clareza.
+ * Agora utiliza o Enum externo 'Tipo' para maior segurança e clareza.
  */
 public class Usuario {
-
-    // Enum para definir os tipos de usuário de forma segura
-    public enum Tipo {
-        ADMINISTRADOR,
-        PROFESSOR,
-        ALUNO
-    }
 
     private String id;
     private String nome;
     private String email;
-    private Tipo tipo; // O tipo de usuário agora é um Enum
+    private Tipo tipo; // O tipo de usuário agora é o Enum externo
     private String identificador; // Matrícula (Aluno) ou Departamento (Professor)
 
     public Usuario(String id, String nome, String email, Tipo tipo, String identificador) {

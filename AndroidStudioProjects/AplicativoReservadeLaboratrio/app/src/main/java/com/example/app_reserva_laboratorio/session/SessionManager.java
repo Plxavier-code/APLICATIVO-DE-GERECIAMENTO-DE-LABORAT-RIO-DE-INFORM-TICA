@@ -1,11 +1,10 @@
 package com.example.app_reserva_laboratorio.session;
 
+import com.example.app_reserva_laboratorio.data.Tipo;
 import com.example.app_reserva_laboratorio.data.Usuario;
 
 /**
  * Singleton para gerenciar a sessão do usuário logado.
- * Em um app real, isso seria inicializado após o login.
- * Por enquanto, simulamos o login de um usuário específico.
  */
 public class SessionManager {
 
@@ -33,7 +32,11 @@ public class SessionManager {
         this.usuarioLogado = null;
     }
 
+    /**
+     * Verifica se o usuário logado é um professor.
+     * @return true se o usuário logado for um professor, false caso contrário.
+     */
     public boolean isProfessor() {
-        return usuarioLogado != null && "Professor".equalsIgnoreCase(usuarioLogado.getTipo());
+        return usuarioLogado != null && usuarioLogado.getTipo() == Tipo.PROFESSOR;
     }
 }
