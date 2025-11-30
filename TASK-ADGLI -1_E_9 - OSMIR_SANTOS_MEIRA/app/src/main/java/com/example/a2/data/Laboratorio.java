@@ -5,9 +5,9 @@ public class Laboratorio {
     private String nome;
     private int capacidade;
     private String localizacao;
-    private String urlImagem; // Nome do recurso drawable (ex: "icon_lab401")
-
-    public Laboratorio() {}
+    private String urlImagem;
+    private boolean emManutencao;
+    private boolean disponivel;
 
     public Laboratorio(String id, String nome, int capacidade, String localizacao, String urlImagem) {
         this.id = id;
@@ -15,17 +15,38 @@ public class Laboratorio {
         this.capacidade = capacidade;
         this.localizacao = localizacao;
         this.urlImagem = urlImagem;
+        this.emManutencao = false;
+        this.disponivel = true;
     }
 
-    // Getters e Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public int getCapacidade() { return capacidade; }
-    public void setCapacidade(int capacidade) { this.capacidade = capacidade; }
-    public String getLocalizacao() { return localizacao; }
-    public void setLocalizacao(String localizacao) { this.localizacao = localizacao; }
-    public String getUrlImagem() { return urlImagem; }
-    public void setUrlImagem(String urlImagem) { this.urlImagem = urlImagem; }
+    // Getters
+    public String getId() {
+        return id;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public int getCapacidade() {
+        return capacidade;
+    }
+    public String getLocalizacao() {
+        return localizacao;
+    }
+    public String getUrlImagem() {
+        return urlImagem;
+    }
+    public boolean isEmManutencao() {
+        return emManutencao;
+    }
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    // Setters
+    public void setEmManutencao(boolean emManutencao) {
+        this.emManutencao = emManutencao;
+    }
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    }
 }

@@ -2,122 +2,55 @@ package com.example.a2.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.a2.R;
-import com.example.a2.data.Reserva;
-import com.example.a2.service.ReservaService;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
+import com.example.a2.data.Usuario;
+import com.example.a2.service.SessionManager;
+import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
-
-    // Service
-    private ReservaService reservaService;
-
-    // Componentes da UI
-    private Toolbar toolbar;
-    private ProgressBar progressBarMain;
-    private LinearLayout layoutReservas;
-    private TextView tvWelcome, tvNoReservas;
-    private FloatingActionButton fabNovaReserva;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializa o service
-        reservaService = new ReservaService();
-
-        // Vincula os componentes do layout
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        progressBarMain = findViewById(R.id.progressBarMain);
-        layoutReservas = findViewById(R.id.layoutReservas);
-        tvWelcome = findViewById(R.id.tvWelcome);
-        tvNoReservas = findViewById(R.id.tvNoReservas);
-        fabNovaReserva = findViewById(R.id.fabNovaReserva);
+        TextView tvWelcome = findViewById(R.id.tvWelcome);
+        MaterialButton btnFazerReserva = findViewById(R.id.btnFazerReserva);
+        MaterialButton btnMinhasReservas = findViewById(R.id.btnMinhasReservas);
 
-        // Mensagem de boas-vindas genérica
-        tvWelcome.setText("Minhas Reservas");
-
-        // Configura o clique do botão FAB para iniciar o fluxo de agendamento
-        fabNovaReserva.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, OpcoesReservaActivity.class);
+        Usuario usuarioLogado = SessionManager.getInstance().getUsuarioLogado();
+        if (usuarioLogado != null) {
+            tvWelcome.setText("Bem-vindo, " + usuarioLogado.getNome());
+        } else {
+            // Fallback se não houver usuário logado (não deveria acontecer)
+            tvWelcome.setText("Bem-vindo!");
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
+            return;
+        }
+
+        btnFazerReserva.setOnClickListener(v -> {
+            // A lógica de qual tela abrir pode ser mais complexa aqui
+            // Por simplicidade, vamos para a lista de laboratórios.
+            startActivity(new Intent(MainActivity.this, ListaLaboratoriosActivity.class));
         });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadReservas(); // Carrega as reservas sempre que a tela se torna visível
-    }
-
-    private void loadReservas() {
-        showLoading(true);
-        layoutReservas.removeAllViews();
-        tvNoReservas.setVisibility(View.GONE);
-
-        // Busca as reservas do serviço local
-        List<Reserva> minhasReservas = reservaService.buscarMinhasReservas("user_padrao");
-
-        if (minhasReservas.isEmpty()) {
-            tvNoReservas.setVisibility(View.VISIBLE);
-        } else {
-            LayoutInflater inflater = LayoutInflater.from(this);
-            for (Reserva reserva : minhasReservas) {
-                View reservaCard = inflater.inflate(R.layout.list_item_minha_reserva, layoutReservas, false);
-
-                TextView tvNome = reservaCard.findViewById(R.id.tvCardLabNome);
-                TextView tvData = reservaCard.findViewById(R.id.tvCardData);
-                TextView tvDescricao = reservaCard.findViewById(R.id.tvCardDescricao);
-                ImageButton btnCancelar = reservaCard.findViewById(R.id.btnCancelarReserva);
-
-                // Preenche os dados no card
-                tvNome.setText(String.format("%s (%s)", reserva.getLaboratorioId(), reserva.getHorarioFormatado()));
-                tvData.setText("Dia: " + reserva.getData());
-                tvDescricao.setText("Motivo: " + reserva.getDescricao());
-
-                btnCancelar.setOnClickListener(v -> {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Cancelar Reserva")
-                            .setMessage("Tem certeza que deseja cancelar esta reserva?")
-                            .setPositiveButton("Sim, Cancelar", (dialog, which) -> {
-                                Toast.makeText(MainActivity.this, "Reserva cancelada!", Toast.LENGTH_SHORT).show();
-                                loadReservas(); // Apenas recarrega a lista
-                            })
-                            .setNegativeButton("Não", null)
-                            .show();
-                });
-
-                layoutReservas.addView(reservaCard);
-            }
-        }
-        showLoading(false);
-    }
-
-    private void showLoading(boolean isLoading) {
-        if (isLoading) {
-            progressBarMain.setVisibility(View.VISIBLE);
-        } else {
-            progressBarMain.setVisibility(View.GONE);
-        }
+        btnMinhasReservas.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, MinhasReservasActivity.class));
+        });
     }
 
     @Override
@@ -128,8 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // O menu de logout foi removido, então não há mais ações aqui.
-        // Pode ser usado para outras funcionalidades no futuro.
+        if (item.getItemId() == R.id.menu_logout) {
+            SessionManager.getInstance().logout();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

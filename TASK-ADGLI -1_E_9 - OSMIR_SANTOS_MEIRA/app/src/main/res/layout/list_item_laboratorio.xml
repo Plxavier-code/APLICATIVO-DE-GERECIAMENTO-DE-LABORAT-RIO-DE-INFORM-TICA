@@ -5,13 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp"
-    android:clickable="true"
-    android:focusable="true">
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,25 +19,17 @@
             android:id="@+id/tvLabNome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="LAB - H401"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            tools:text="LAB - H401" />
 
         <TextView
             android:id="@+id/tvLabCapacidade"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Capacidade: 16 computadores"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            tools:text="Capacidade: 16" />
 
-        <TextView
-            android:id="@+id/tvLabDescricao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Prédio H, 4º andar"
-            android:textSize="14sp"/>
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

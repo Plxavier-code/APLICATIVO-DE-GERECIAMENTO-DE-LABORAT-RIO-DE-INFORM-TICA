@@ -1,28 +1,22 @@
 package com.example.a2.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a2.R;
 import com.example.a2.data.Laboratorio;
-import com.example.a2.data.ReservaRepository;
+import com.example.a2.service.ReservaService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListaLaboratoriosActivity extends AppCompatActivity {
-
-    private LinearLayout layoutLaboratorios;
-    private ProgressBar progressBarLista;
-    private TextView tvNenhumLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,57 +25,30 @@ public class ListaLaboratoriosActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbarLista);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Escolha um Laboratório");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Botão de voltar
 
-        layoutLaboratorios = findViewById(R.id.layoutLaboratorios);
-        progressBarLista = findViewById(R.id.progressBarLista);
-        tvNenhumLab = findViewById(R.id.tvNenhumLab);
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewLabs);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Exibe em 2 colunas
 
-        carregarLaboratorios();
-    }
+        ReservaService reservaService = new ReservaService();
+        // Filtra para mostrar apenas laboratórios inteiros, não estações
+        List<Laboratorio> laboratorios = reservaService.getLaboratorios().stream()
+                .filter(l -> !l.getNome().contains("Estação"))
+                .collect(Collectors.toList());
 
-    private void carregarLaboratorios() {
-        // Simulação de carregamento (não é necessário delay real em memória)
-        progressBarLista.setVisibility(View.GONE);
-        layoutLaboratorios.removeAllViews();
-
-        List<Laboratorio> labs = ReservaRepository.getInstance().getLaboratorios();
-
-        if (labs.isEmpty()) {
-            tvNenhumLab.setVisibility(View.VISIBLE);
-        } else {
-            tvNenhumLab.setVisibility(View.GONE);
-            for (Laboratorio lab : labs) {
-                addLaboratorioCard(lab);
-            }
-        }
-    }
-
-    private void addLaboratorioCard(Laboratorio lab) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View card = inflater.inflate(R.layout.list_item_laboratorio, layoutLaboratorios, false);
-
-        TextView tvNome = card.findViewById(R.id.tvLabNome);
-        TextView tvCap = card.findViewById(R.id.tvLabCapacidade);
-        TextView tvDesc = card.findViewById(R.id.tvLabDescricao);
-
-        tvNome.setText(lab.getNome());
-        tvCap.setText("Capacidade: " + lab.getCapacidade());
-        tvDesc.setText(lab.getLocalizacao()); // Usando localização como descrição
-
-        card.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AgendamentoActivity.class);
-            intent.putExtra("LABORATORIO_ID", lab.getId());
-            intent.putExtra("LABORATORIO_NOME", lab.getNome());
+        LabsAdapter adapter = new LabsAdapter(laboratorios, lab -> {
+            Intent intent = new Intent(ListaLaboratoriosActivity.this, AgendamentoActivity.class);
+            intent.putExtra("LAB_ID", lab.getId());
             startActivity(intent);
         });
 
-        layoutLaboratorios.addView(card);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        finish(); // Ação do botão de voltar
         return true;
     }
 }

@@ -1,81 +1,119 @@
 package com.example.a2.service;
 
-import com.example.a2.data.Reserva;
+import com.example.a2.data.Laboratorio;
 import com.example.a2.data.ReservaRepository;
+import com.example.a2.data.Reserva;
+
 import java.util.List;
 
 public class ReservaService {
 
-    private ReservaRepository repository;
+    private ReservaRepository repositorio;
 
     public ReservaService() {
-        this.repository = ReservaRepository.getInstance();
+        this.repositorio = ReservaRepository.getInstance();
     }
 
-    public boolean fazerReserva(Reserva novaReserva) {
+    public List<Laboratorio> getLaboratorios() {
+        return repositorio.getLaboratorios();
+    }
+
+    public List<Reserva> buscarMinhasReservas(String alunoId) {
+        return repositorio.getReservasPorAluno(alunoId);
+    }
+
+    public Reserva getReservaById(String idReserva) {
+        return repositorio.getReservaById(idReserva);
+    }
+
+    public synchronized boolean FazerReserva(Reserva novaReserva) {
         if (existeConflito(novaReserva)) {
             return false;
         }
-        repository.adicionarReserva(novaReserva);
+        repositorio.addReserva(novaReserva);
         return true;
     }
 
-    public List<Reserva> buscarMinhasReservas(String usuarioId) {
-        return repository.getReservasPorUsuario(usuarioId);
-    }
-
     public void cancelarReserva(String idReserva) {
-        repository.removerReserva(idReserva);
+        repositorio.removerReserva(idReserva);
     }
 
-    private boolean existeConflito(Reserva nova) {
-        List<Reserva> existentes = repository.getReservas();
-        String idLabPaiNovo = extrairLabPai(nova.getLaboratorioId());
+    public synchronized boolean EditarReserva(String idReserva, String data, int minutoInicio, int minutoFim, String descricao, String labId) {
+        Reserva reservaOriginal = repositorio.getReservaById(idReserva);
+        if (reservaOriginal == null) {
+            return false;
+        }
 
-        for (Reserva existente : existentes) {
-            // 1. Verifica Data
-            if (!existente.getData().equals(nova.getData())) continue;
+        Reserva reservaEditadaCheck = new Reserva(
+                idReserva,
+                labId,
+                data,
+                minutoInicio,
+                minutoFim,
+                descricao,
+                reservaOriginal.getAlunoId()
+        );
 
-            // 2. Verifica Horário (Interseção)
-            boolean choqueHorario = (nova.getMinutoInicio() < existente.getMinutoFim()) &&
-                    (nova.getMinutoFim() > existente.getMinutoInicio());
+        if (existeConflito(reservaEditadaCheck)) {
+            return false;
+        }
 
-            if (choqueHorario) {
-                // 3. Verifica Local
-                String idLabPaiExistente = extrairLabPai(existente.getLaboratorioId());
+        repositorio.updateReserva(idReserva, data, minutoInicio, minutoFim, descricao, labId);
+        return true;
+    }
 
-                // Se estão no mesmo espaço físico (Laboratório)
-                if (idLabPaiNovo.equals(idLabPaiExistente)) {
-                    // Regra: Se um deles é reserva do laboratório INTEIRO, bloqueia tudo
-                    boolean novaEhLabInteiro = !nova.getLaboratorioId().contains("est_");
-                    boolean existenteEhLabInteiro = !existente.getLaboratorioId().contains("est_");
+    private boolean existeConflito(Reserva reservaParaVerificar) {
+        List<Reserva> reservasExistentes = repositorio.getReservas();
 
-                    if (novaEhLabInteiro || existenteEhLabInteiro) {
-                        return true; // Conflito: Lab inteiro vs Qualquer coisa
-                    }
+        Laboratorio labObjParaVerificar = repositorio.getLaboratorioById(reservaParaVerificar.getLaboratorioId());
+        if (labObjParaVerificar == null) return true;
+        String labPaiParaVerificar = getLabPai(labObjParaVerificar.getNome());
+        boolean ehReservaDeLabInteiro = !labObjParaVerificar.getNome().contains("Estação");
 
-                    // Se ambos são estações, só conflita se for a MESMA estação
-                    if (nova.getLaboratorioId().equals(existente.getLaboratorioId())) {
-                        return true;
-                    }
-                }
+        for (Reserva existente : reservasExistentes) {
+            if (existente.getIdReserva().equals(reservaParaVerificar.getIdReserva())) {
+                continue;
+            }
+            if (!existente.getData().equals(reservaParaVerificar.getData())) {
+                continue;
+            }
+
+            Laboratorio labObjExistente = repositorio.getLaboratorioById(existente.getLaboratorioId());
+            if (labObjExistente == null) continue;
+            String labPaiExistente = getLabPai(labObjExistente.getNome());
+            boolean existenteEhLabInteiro = !labObjExistente.getNome().contains("Estação");
+
+            if (!labPaiParaVerificar.equals(labPaiExistente)) {
+                continue;
+            }
+
+            boolean conflitoDeHorario =
+                    (reservaParaVerificar.getMinutoInicio() < existente.getMinutoFim()) &&
+                            (reservaParaVerificar.getMinutoFim() > existente.getMinutoInicio());
+
+            if (!conflitoDeHorario) {
+                continue;
+            }
+
+            if (ehReservaDeLabInteiro || existenteEhLabInteiro) {
+                return true;
+            }
+
+            if (reservaParaVerificar.getLaboratorioId().equals(existente.getLaboratorioId())) {
+                return true;
             }
         }
+
         return false;
     }
 
-    // Helper: Se for "est_1_lab_h401", retorna "lab_h401". Se for "lab_h401", retorna "lab_h401".
-    private String extrairLabPai(String id) {
-        if (id.startsWith("est_")) {
-            // Lógica simples: procura o último trecho após o último underline se seguir o padrão
-            // Ou, para o projeto atual, verificamos se contém o ID do lab
-            if (id.contains("lab_h401")) return "lab_h401";
-            if (id.contains("lab_h402")) return "lab_h402";
-            if (id.contains("lab_h403")) return "lab_h403";
-            if (id.contains("lab_h404")) return "lab_h404";
-            if (id.contains("lab_h406")) return "lab_h406";
-            if (id.contains("lab_h407")) return "lab_h407";
+    private String getLabPai(String nomeCompleto) {
+        if (nomeCompleto.startsWith("Estação")) {
+            int index = nomeCompleto.indexOf(" - ");
+            if (index != -1) {
+                return nomeCompleto.substring(index + 3);
+            }
         }
-        return id;
+        return nomeCompleto;
     }
 }

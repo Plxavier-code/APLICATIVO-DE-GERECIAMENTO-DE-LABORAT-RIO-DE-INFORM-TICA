@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.a2.R;
 import com.example.a2.data.Reserva;
 import com.example.a2.data.ReservaRepository;
+import com.example.a2.service.NotificationService;
 import com.example.a2.service.ReservaService;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import java.util.Locale;
 public class AgendamentoEstacaoActivity extends AppCompatActivity {
 
     private ReservaService reservaService;
+    private NotificationService notificationService;
 
     private TextView tvNomeEstacaoAgendamento;
     private CalendarView calendarView;
@@ -44,6 +46,7 @@ public class AgendamentoEstacaoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_agendamento_estacao);
 
         reservaService = new ReservaService();
+        notificationService = new NotificationService(this);
 
         estacaoId = getIntent().getStringExtra("ESTACAO_ID");
         estacaoNome = getIntent().getStringExtra("ESTACAO_NOME");
@@ -99,15 +102,16 @@ public class AgendamentoEstacaoActivity extends AppCompatActivity {
             int minInicio = (Integer.parseInt(inicio[0]) * 60) + Integer.parseInt(inicio[1]);
             int minFim = (Integer.parseInt(fim[0]) * 60) + Integer.parseInt(fim[1]);
 
-            String novoId = ReservaRepository.getInstance().gerarNovoId();
+            String novoId = ReservaRepository.getInstance().getProximoIdReserva();
             Reserva nova = new Reserva(novoId, estacaoId, selectedDate, minInicio, minFim, descricao, "user_padrao");
 
-            boolean sucesso = reservaService.fazerReserva(nova);
+            boolean sucesso = reservaService.FazerReserva(nova);
 
             progressBarAgendamento.setVisibility(View.GONE);
 
             if (sucesso) {
                 Toast.makeText(this, "Estação reservada com sucesso!", Toast.LENGTH_LONG).show();
+                notificationService.sendNotification("Reserva Confirmada", "Sua reserva para " + estacaoNome + " foi confirmada.");
                 finish();
             } else {
                 Toast.makeText(this, "Conflito: Estação ou Laboratório ocupados!", Toast.LENGTH_LONG).show();

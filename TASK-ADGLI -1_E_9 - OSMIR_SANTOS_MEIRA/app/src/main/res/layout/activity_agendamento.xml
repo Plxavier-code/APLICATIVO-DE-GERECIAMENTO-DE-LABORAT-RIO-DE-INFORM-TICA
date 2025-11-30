@@ -1,33 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF"
-    tools:context="ui.AgendamentoActivity">
+    tools:context=".ui.AgendamentoActivity">
 
-    <!-- 1. Barra de Título (Toolbar) -->
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="@android:color/white" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbarAgendamento"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#28a745"
-            app:title="Realizar Reserva"
-            app:titleTextColor="@android:color/white"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@android:color/white" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- 2. Conteúdo com Scroll -->
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -37,86 +24,43 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Título do Laboratório (será preenchido via Java) -->
-            <TextView
-                android:id="@+id/tvNomeLabAgendamento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Reservando: LAB - H401"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Calendário (ADGLI-5) -->
             <CalendarView
-                android:id="@+id/calendarView"
+                android:id="@+id/calendar_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/edittext_background" />
+                android:layout_height="wrap_content" />
 
-            <!-- Seletor de Horário (ADGLI-5) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Horário"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:text="Horário" />
 
             <Spinner
-                android:id="@+id/spinnerHorario"
+                android:id="@+id/spinner_horario"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/edittext_background"
-                android:padding="8dp"/>
-
-            <!-- Descrição da Reserva -->
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Descrição da reserva (Opcional)"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
+                android:layout_marginTop="8dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:hint="Descrição da reserva (opcional)">
 
-            <EditText
-                android:id="@+id/etDescricao"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ex: Aula de Linguagem de Programação II"
-                android:inputType="textMultiLine"
-                android:minLines="3"
-                android:gravity="top"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_descricao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Botão de Confirmação -->
             <Button
-                android:id="@+id/btnConfirmarReserva"
+                android:id="@+id/btn_confirmar_reserva"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="CONFIRMAR RESERVA"
-                android:backgroundTint="#28a745"
-                android:textColor="@android:color/white"
-                android:padding="12dp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"/>
-
-            <!-- Feedback de Carregamento -->
-            <ProgressBar
-                android:id="@+id/progressBarAgendamento"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"/>
+                android:layout_marginTop="24dp"
+                android:text="Confirmar Reserva" />
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </LinearLayout>

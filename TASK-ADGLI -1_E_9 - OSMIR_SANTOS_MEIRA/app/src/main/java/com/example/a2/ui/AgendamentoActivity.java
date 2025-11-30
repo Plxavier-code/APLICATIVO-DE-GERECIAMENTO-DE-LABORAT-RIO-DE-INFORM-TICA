@@ -2,12 +2,9 @@ package com.example.a2.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,27 +15,26 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.a2.R;
 import com.example.a2.data.Reserva;
 import com.example.a2.data.ReservaRepository;
+import com.example.a2.data.Usuario;
+import com.example.a2.service.NotificationService;
 import com.example.a2.service.ReservaService;
+import com.example.a2.service.SessionManager;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class AgendamentoActivity extends AppCompatActivity {
 
-    private ReservaService reservaService;
-
-    // UI
-    private TextView tvNomeLabAgendamento;
     private CalendarView calendarView;
     private Spinner spinnerHorario;
-    private EditText etDescricao;
+    private TextInputEditText editTextDescricao;
     private Button btnConfirmarReserva;
-    private ProgressBar progressBarAgendamento;
-
-    private String labId;
-    private String labNome;
-    private String selectedDate;
+    private ReservaService reservaService;
+    private NotificationService notificationService;
+    private String dataSelecionada;
+    private String labIdSelecionado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,94 +42,87 @@ public class AgendamentoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_agendamento);
 
         reservaService = new ReservaService();
+        notificationService = new NotificationService(this);
+        labIdSelecionado = getIntent().getStringExtra("LAB_ID");
 
-        // Recebe dados da Intent
-        labId = getIntent().getStringExtra("LABORATORIO_ID");
-        labNome = getIntent().getStringExtra("LABORATORIO_NOME");
-
-        if (labId == null) labId = "lab_h401"; // Fallback para testes
-
-        inicializarUI();
-    }
-
-    private void inicializarUI() {
-        Toolbar toolbar = findViewById(R.id.toolbarAgendamento);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        tvNomeLabAgendamento = findViewById(R.id.tvNomeLabAgendamento);
-        calendarView = findViewById(R.id.calendarView);
-        spinnerHorario = findViewById(R.id.spinnerHorario);
-        etDescricao = findViewById(R.id.etDescricao);
-        btnConfirmarReserva = findViewById(R.id.btnConfirmarReserva);
-        progressBarAgendamento = findViewById(R.id.progressBarAgendamento);
-
-        tvNomeLabAgendamento.setText("Reservando: " + (labNome != null ? labNome : "Laboratório"));
-
-        // Configurar Spinner
-        String[] horarios = {"Selecione o horário", "07:30 - 09:30", "09:30 - 11:30", "13:30 - 15:30", "18:00 - 19:00", "19:00 - 20:40", "20:40 - 22:00"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, horarios);
-        spinnerHorario.setAdapter(adapter);
-
-        // Data padrão (Hoje)
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        selectedDate = sdf.format(new Date(calendarView.getDate()));
-
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
-        });
-
-        btnConfirmarReserva.setOnClickListener(v -> confirmarReserva());
-    }
-
-    private void confirmarReserva() {
-        String horarioStr = spinnerHorario.getSelectedItem().toString();
-        String descricao = etDescricao.getText().toString();
-
-        if (horarioStr.contains("Selecione")) {
-            Toast.makeText(this, "Selecione um horário válido.", Toast.LENGTH_SHORT).show();
+        if (labIdSelecionado == null || labIdSelecionado.isEmpty()) {
+            Toast.makeText(this, "Erro: ID do laboratório não recebido.", Toast.LENGTH_LONG).show();
+            finish();
             return;
         }
 
-        progressBarAgendamento.setVisibility(View.VISIBLE);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Agendar Horário");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        try {
-            // Parse do horário (ex: "19:00 - 20:40")
-            String[] partes = horarioStr.split(" - ");
-            String[] inicio = partes[0].split(":");
-            String[] fim = partes[1].split(":");
+        calendarView = findViewById(R.id.calendar_view);
+        spinnerHorario = findViewById(R.id.spinner_horario);
+        editTextDescricao = findViewById(R.id.edit_text_descricao);
+        btnConfirmarReserva = findViewById(R.id.btn_confirmar_reserva);
 
-            int minInicio = (Integer.parseInt(inicio[0]) * 60) + Integer.parseInt(inicio[1]);
-            int minFim = (Integer.parseInt(fim[0]) * 60) + Integer.parseInt(fim[1]);
+        // Define a data inicial como a data atual
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        dataSelecionada = sdf.format(cal.getTime());
 
-            // Cria Objeto
-            String novoId = ReservaRepository.getInstance().gerarNovoId();
-            Reserva nova = new Reserva(novoId, labId, selectedDate, minInicio, minFim, descricao, "user_padrao");
+        String[] horarios = {"Selecione o horário", "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00", "21:00 - 22:00"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, horarios);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHorario.setAdapter(adapter);
 
-            // Chama Service (Síncrono)
-            boolean sucesso = reservaService.fazerReserva(nova);
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            dataSelecionada = dayOfMonth + "/" + (month + 1) + "/" + year;
+        });
 
-            progressBarAgendamento.setVisibility(View.GONE);
+        btnConfirmarReserva.setOnClickListener(v -> {
+            String horarioSelecionado = spinnerHorario.getSelectedItem().toString();
+            String descricao = editTextDescricao.getText().toString();
 
-            if (sucesso) {
-                Toast.makeText(this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
-                // Opcional: Ir para Minhas Reservas
-                // Intent i = new Intent(this, MinhasReservasActivity.class);
-                // startActivity(i);
-                finish();
-            } else {
-                Toast.makeText(this, "Conflito: Horário indisponível!", Toast.LENGTH_LONG).show();
+            if (dataSelecionada == null || horarioSelecionado.equals("Selecione o horário")) {
+                Toast.makeText(AgendamentoActivity.this, "Selecione data e horário", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-        } catch (Exception e) {
-            progressBarAgendamento.setVisibility(View.GONE);
-            Toast.makeText(this, "Erro nos dados: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+            Usuario usuario = SessionManager.getInstance().getUsuarioLogado();
+            if (usuario == null) {
+                Toast.makeText(this, "Erro de sessão. Faça login novamente.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                ReservaRepository repository = ReservaRepository.getInstance();
+                String novoId = repository.getProximoIdReserva();
+
+                String[] partesHorario = horarioSelecionado.split(" - ");
+                String[] inicioSplit = partesHorario[0].split(":");
+                String[] fimSplit = partesHorario[1].split(":");
+                int minutoInicio = (Integer.parseInt(inicioSplit[0]) * 60) + Integer.parseInt(inicioSplit[1]);
+                int minutoFim = (Integer.parseInt(fimSplit[0]) * 60) + Integer.parseInt(fimSplit[1]);
+
+                Reserva novaReserva = new Reserva(novoId, labIdSelecionado, dataSelecionada, minutoInicio, minutoFim, descricao, usuario.getId());
+
+                boolean sucesso = reservaService.FazerReserva(novaReserva);
+
+                if (sucesso) {
+                    Toast.makeText(AgendamentoActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
+                    notificationService.sendNotification("Nova Reserva de Laboratório", "O laboratório " + labIdSelecionado + " foi reservado.");
+                    Intent intent = new Intent(AgendamentoActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(AgendamentoActivity.this, "ERRO: Este horário já está reservado!", Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(AgendamentoActivity.this, "Erro ao processar o horário.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        finish();
         return true;
     }
 }

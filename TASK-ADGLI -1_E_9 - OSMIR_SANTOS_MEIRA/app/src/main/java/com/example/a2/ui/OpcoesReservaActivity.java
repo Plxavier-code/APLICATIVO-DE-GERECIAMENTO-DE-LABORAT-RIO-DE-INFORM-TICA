@@ -1,4 +1,4 @@
-package ui;
+package com.example.a2.ui;
 
 import android.content.Intent;
 import android.os.Bundle;

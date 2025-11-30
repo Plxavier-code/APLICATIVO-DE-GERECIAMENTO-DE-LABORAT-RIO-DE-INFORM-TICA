@@ -15,19 +15,12 @@
         app:title="Laboratórios Disponíveis"
         app:titleTextColor="@android:color/white" />
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewLabs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbarLista">
-
-        <LinearLayout
-            android:id="@+id/layoutLaboratorios"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
-    </ScrollView>
+        android:layout_below="@id/toolbarLista"
+        android:padding="8dp" />
 
     <ProgressBar
         android:id="@+id/progressBarLista"

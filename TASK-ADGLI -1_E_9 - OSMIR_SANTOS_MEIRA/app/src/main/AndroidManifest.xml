@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Não precisamos da permissão de Internet por enquanto -->
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,11 +10,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+        android:theme="@style/Theme._2"
         tools:targetApi="31">
 
         <activity
-            android:name="ui.LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,30 +23,24 @@
         </activity>
 
         <activity
-            android:name="ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false" />
-
         <activity
-            android:name="ui.OpcoesReservaActivity"
+            android:name=".ui.MinhasReservasActivity"
             android:exported="false" />
-
         <activity
-            android:name="ui.ListaLaboratoriosActivity"
+            android:name=".ui.ListaLaboratoriosActivity"
             android:exported="false" />
-
         <activity
-            android:name="ui.AgendamentoActivity"
+            android:name=".ui.ListaEstacoesActivity"
             android:exported="false" />
-
-        <!-- *** PASSO 4 ADICIONADO AQUI *** -->
-        <!-- Tela 6: Lista de Estações -->
         <activity
-            android:name="ui.ListaEstacoesActivity"
+            android:name=".ui.AgendamentoActivity"
             android:exported="false" />
-
-        <!-- Tela 7: Agendamento de Estação -->
+        
+        <!-- Mantendo a referência a OpcoesReservaActivity caso seja usada -->
         <activity
-            android:name="ui.AgendamentoEstacaoActivity"
+            android:name=".ui.OpcoesReservaActivity"
             android:exported="false" />
 
     </application>
