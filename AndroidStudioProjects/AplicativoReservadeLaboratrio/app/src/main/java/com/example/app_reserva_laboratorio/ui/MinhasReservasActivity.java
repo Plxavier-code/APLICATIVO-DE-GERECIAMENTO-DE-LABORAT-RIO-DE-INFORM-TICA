@@ -17,7 +17,6 @@ import com.example.app_reserva_laboratorio.data.ReservaRepository;
 import com.example.app_reserva_laboratorio.data.Usuario;
 import com.example.app_reserva_laboratorio.service.ReservaService;
 import com.example.app_reserva_laboratorio.session.SessionManager;
-import com.example.app_reserva_laboratorio.util.NotificationHelper; // IMPORT ADICIONADO
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class MinhasReservasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_minhas_reservas);
 
-        reservaService = new ReservaService();
+        reservaService = new ReservaService(this);
         containerReservas = findViewById(R.id.layoutMinhasReservas);
 
         carregarMinhasReservas();
@@ -68,17 +67,8 @@ public class MinhasReservasActivity extends AppCompatActivity {
             tvInfo.setText(info);
 
             btnAcao.setOnClickListener(v -> {
-                // 1. Guarda a referência da reserva antes de removê-la
-                Reserva reservaCancelada = reserva;
-
-                // 2. Remove a reserva do repositório
-                reservaService.cancelarReserva(reservaCancelada.getIdReserva());
-
-                // 3. Notifica o usuário
+                reservaService.cancelarReserva(reserva.getIdReserva());
                 Toast.makeText(MinhasReservasActivity.this, "Reserva cancelada!", Toast.LENGTH_SHORT).show();
-                NotificationHelper.notificarSobreCancelamento(getApplicationContext(), reservaCancelada);
-
-                // 4. Recarrega a lista para atualizar a UI
                 carregarMinhasReservas();
             });
 

@@ -54,7 +54,7 @@ public class EditarReservaActivity extends AppCompatActivity implements Navigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_reserva);
 
-        reservaService = new ReservaService();
+        reservaService = new ReservaService(this);
         reservaRepository = ReservaRepository.getInstance();
 
         // Pega o ID da reserva que foi passado pela Intent

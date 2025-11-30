@@ -1,5 +1,6 @@
 package com.example.app_reserva_laboratorio.service;
 
+import android.content.Context;
 import com.example.app_reserva_laboratorio.data.Laboratorio;
 import com.example.app_reserva_laboratorio.data.ReservaRepository;
 import com.example.app_reserva_laboratorio.data.Reserva;
@@ -9,9 +10,11 @@ import java.util.List;
 public class ReservaService {
 
     private ReservaRepository repositorio;
+    private NotificationService notificationService;
 
-    public ReservaService() {
+    public ReservaService(Context context) {
         this.repositorio = ReservaRepository.getInstance();
+        this.notificationService = new NotificationService(context);
     }
 
     public List<Laboratorio> getLaboratorios() {
@@ -42,6 +45,8 @@ public class ReservaService {
 
         // Se não tem conflito, salvar no repositório.
         repositorio.addReserva(novaReserva);
+        notificationService.notificarProfessor(novaReserva);
+        notificationService.notificarAlunoConfirmacao(novaReserva);
         return true;
     }
 
@@ -49,7 +54,11 @@ public class ReservaService {
      * Cancela uma reserva.
      */
     public void cancelarReserva(String idReserva) {
-        repositorio.removerReserva(idReserva);
+        Reserva reserva = repositorio.getReservaById(idReserva);
+        if (reserva != null) {
+            repositorio.removerReserva(idReserva);
+            notificationService.notificarAlunoCancelamento(reserva);
+        }
     }
 
     /**
@@ -78,6 +87,11 @@ public class ReservaService {
 
         //Se não tem conflito, aplicar a edição no repositório.
         repositorio.updateReserva(idReserva, data, minutoInicio, minutoFim, descricao, labId);
+        Reserva reservaAtualizada = repositorio.getReservaById(idReserva);
+        if(reservaAtualizada != null) {
+            notificationService.notificarProfessor(reservaAtualizada);
+            notificationService.notificarAlunoConfirmacao(reservaAtualizada);
+        }
         return true;
     }
 

@@ -54,7 +54,7 @@ public class EditarEstacaoActivity extends AppCompatActivity implements Navigati
         setContentView(R.layout.activity_editar_estacao);
 
         // Inicializa a lógica
-        reservaService = new ReservaService();
+        reservaService = new ReservaService(this);
         reservaRepository = ReservaRepository.getInstance();
 
         // Pega a reserva atual

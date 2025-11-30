@@ -23,7 +23,6 @@ import com.example.app_reserva_laboratorio.data.ReservaRepository;
 import com.example.app_reserva_laboratorio.data.Usuario;
 import com.example.app_reserva_laboratorio.service.ReservaService;
 import com.example.app_reserva_laboratorio.session.SessionManager;
-import com.example.app_reserva_laboratorio.util.NotificationHelper;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -45,7 +44,7 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realizar_reserva);
 
-        reservaService = new ReservaService();
+        reservaService = new ReservaService(this);
 
         labIdSelecionado = getIntent().getStringExtra("LAB_ID");
         if (labIdSelecionado == null || labIdSelecionado.isEmpty()) {
@@ -115,8 +114,6 @@ public class RealizarReservaActivity extends AppCompatActivity implements Naviga
 
                 if (sucesso) {
                     Toast.makeText(RealizarReservaActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
-                    // CORREÇÃO: Usando o nome de método correto e genérico
-                    NotificationHelper.notificarConfirmacao(getApplicationContext(), novaReserva);
                     Intent intent = new Intent(RealizarReservaActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

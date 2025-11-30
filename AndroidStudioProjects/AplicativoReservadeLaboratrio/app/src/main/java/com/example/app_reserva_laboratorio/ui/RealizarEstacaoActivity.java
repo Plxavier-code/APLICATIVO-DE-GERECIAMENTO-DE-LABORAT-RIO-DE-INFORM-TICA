@@ -55,7 +55,7 @@ public class RealizarEstacaoActivity extends AppCompatActivity implements Naviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realizar_estacao);
 
-        reservaService = new ReservaService();
+        reservaService = new ReservaService(this);
 
         labIdSelecionado = getIntent().getStringExtra("LAB_ID");
         if (labIdSelecionado == null || labIdSelecionado.isEmpty()) {
