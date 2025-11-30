@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    O AndroidManifest é o arquivo principal de configuração do app.
-    Aqui são registradas permissões, atividades, ícones, temas e
-    comportamentos essenciais do aplicativo.
--->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissão para exibir notificações (obrigatória para Android 13+) -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Permissão para acesso à internet -->
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <!--
-       <application>
-       Agrupa todas as configurações do aplicativo: tema, ícones, backup,
-       bem como as Activities que serão utilizadas pelo app.
-   -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -27,84 +12,36 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AplicativoReservaDeLaboratório">
 
-        <!--
-            Main Activity (tela inicial do aplicativo) é exportada, pois o sistema
-             Android precisa acessá-la.
-             Possui a intent-filter que define como a tela de lançamento do app.
-        -->
+        <!-- TELA DE LOGIN se torna a tela de entrada principal -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
-
             <intent-filter>
-                <!-- Define que esta activity é o ponto de entrada do app -->
                 <action android:name="android.intent.action.MAIN" />
-                <!-- Categoria que indica que a activity pode aparecer na gaveta de apps -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!--
-            Todas as activities do aplicativo
-            Todas têm exported="false", o que significa que apenas o próprio app
-            pode acessá-las. Isso aumenta a segurança.
-        -->
+        <!-- MainActivity agora é uma tela interna normal -->
         <activity
-            android:name=".ui.NovaReservaActivity"
+            android:name=".ui.MainActivity"
             android:exported="false" />
 
-        <activity
-            android:name=".ui.ListaLabsActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.MinhasReservasActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.EditarReservaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.RealizarReservaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.ListaEstacoesActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.EditarEstacaoActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.AdminMainActivity"
-            android:exported="false"
-            android:label="Painel do Administrador" />
-
-        <activity
-            android:name=".ui.GerenciarLabsActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.GerenciarUsuariosActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.GerenciarSoftwareActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.ConsultarSenhasActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.EditarUsuarioActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.RealizarEstacaoActivity"
-            android:exported="false" />
+        <!-- Declaração das outras activities -->
+        <activity android:name=".ui.NovaReservaActivity" android:exported="false" />
+        <activity android:name=".ui.ListaLabsActivity" android:exported="false" />
+        <activity android:name=".ui.MinhasReservasActivity" android:exported="false" />
+        <activity android:name=".ui.EditarReservaActivity" android:exported="false" />
+        <activity android:name=".ui.RealizarReservaActivity" android:exported="false" />
+        <activity android:name=".ui.ListaEstacoesActivity" android:exported="false" />
+        <activity android:name=".ui.EditarEstacaoActivity" android:exported="false" />
+        <activity android:name=".ui.AdminMainActivity" android:exported="false" android:label="Painel do Administrador" />
+        <activity android:name=".ui.GerenciarLabsActivity" android:exported="false" />
+        <activity android:name=".ui.GerenciarUsuariosActivity" android:exported="false" />
+        <activity android:name=".ui.GerenciarSoftwareActivity" android:exported="false" />
+        <activity android:name=".ui.ConsultarSenhasActivity" android:exported="false" />
+        <activity android:name=".ui.EditarUsuarioActivity" android:exported="false" />
+        <activity android:name=".ui.RealizarEstacaoActivity" android:exported="false" />
 
     </application>
 </manifest>

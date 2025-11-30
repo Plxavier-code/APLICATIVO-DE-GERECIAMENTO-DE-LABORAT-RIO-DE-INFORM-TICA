@@ -1,18 +1,25 @@
 package com.example.app_reserva_laboratorio.data;
 
 /**
- * Modelo (Model) que representa um Usuário (Aluno ou Professor).
- * Baseado no diagrama UML.
+ * Modelo (Model) que representa um Usuário.
+ * Agora utiliza um Enum para o tipo de usuário para maior segurança e clareza.
  */
 public class Usuario {
+
+    // Enum para definir os tipos de usuário de forma segura
+    public enum Tipo {
+        ADMINISTRADOR,
+        PROFESSOR,
+        ALUNO
+    }
 
     private String id;
     private String nome;
     private String email;
-    private String tipo; // "Aluno" ou "Professor"
-    private String identificador; // Guarda a Matrícula (se Aluno) ou Depto (se Professor)
+    private Tipo tipo; // O tipo de usuário agora é um Enum
+    private String identificador; // Matrícula (Aluno) ou Departamento (Professor)
 
-    public Usuario(String id, String nome, String email, String tipo, String identificador) {
+    public Usuario(String id, String nome, String email, Tipo tipo, String identificador) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -33,7 +40,7 @@ public class Usuario {
         return email;
     }
 
-    public String getTipo() {
+    public Tipo getTipo() {
         return tipo;
     }
 
