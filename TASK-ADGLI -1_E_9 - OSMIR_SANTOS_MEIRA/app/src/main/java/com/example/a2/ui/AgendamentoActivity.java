@@ -6,7 +6,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +15,9 @@ import com.example.a2.R;
 import com.example.a2.data.Reserva;
 import com.example.a2.data.ReservaRepository;
 import com.example.a2.data.Usuario;
-import com.example.a2.service.NotificationService;
 import com.example.a2.service.ReservaService;
 import com.example.a2.service.SessionManager;
+import com.example.a2.util.NotificationHelper; // Importa a classe de notificação
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.text.SimpleDateFormat;
@@ -32,7 +31,6 @@ public class AgendamentoActivity extends AppCompatActivity {
     private TextInputEditText editTextDescricao;
     private Button btnConfirmarReserva;
     private ReservaService reservaService;
-    private NotificationService notificationService;
     private String dataSelecionada;
     private String labIdSelecionado;
 
@@ -42,7 +40,6 @@ public class AgendamentoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_agendamento);
 
         reservaService = new ReservaService();
-        notificationService = new NotificationService(this);
         labIdSelecionado = getIntent().getStringExtra("LAB_ID");
 
         if (labIdSelecionado == null || labIdSelecionado.isEmpty()) {
@@ -61,7 +58,6 @@ public class AgendamentoActivity extends AppCompatActivity {
         editTextDescricao = findViewById(R.id.edit_text_descricao);
         btnConfirmarReserva = findViewById(R.id.btn_confirmar_reserva);
 
-        // Define a data inicial como a data atual
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         dataSelecionada = sdf.format(cal.getTime());
@@ -106,7 +102,8 @@ public class AgendamentoActivity extends AppCompatActivity {
 
                 if (sucesso) {
                     Toast.makeText(AgendamentoActivity.this, "Reserva realizada com sucesso!", Toast.LENGTH_LONG).show();
-                    notificationService.sendNotification("Nova Reserva de Laboratório", "O laboratório " + labIdSelecionado + " foi reservado.");
+                    // *** Dispara a notificação de confirmação ***
+                    NotificationHelper.notificarConfirmacao(getApplicationContext(), novaReserva);
                     Intent intent = new Intent(AgendamentoActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

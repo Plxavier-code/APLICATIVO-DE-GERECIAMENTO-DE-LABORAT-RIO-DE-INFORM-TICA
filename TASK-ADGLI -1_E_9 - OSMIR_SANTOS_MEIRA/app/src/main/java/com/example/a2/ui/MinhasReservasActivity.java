@@ -16,9 +16,9 @@ import com.example.a2.data.Laboratorio;
 import com.example.a2.data.Reserva;
 import com.example.a2.data.ReservaRepository;
 import com.example.a2.data.Usuario;
-import com.example.a2.service.NotificationService;
 import com.example.a2.service.ReservaService;
 import com.example.a2.service.SessionManager;
+import com.example.a2.util.NotificationHelper; // Importa a classe de notificação
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class MinhasReservasActivity extends AppCompatActivity {
 
     private LinearLayout containerReservas;
     private ReservaService reservaService;
-    private NotificationService notificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +33,6 @@ public class MinhasReservasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_minhas_reservas);
 
         reservaService = new ReservaService();
-        notificationService = new NotificationService(this);
         containerReservas = findViewById(R.id.layoutMinhasReservas);
     }
 
@@ -50,7 +48,7 @@ public class MinhasReservasActivity extends AppCompatActivity {
         Usuario usuarioLogado = SessionManager.getInstance().getUsuarioLogado();
         if (usuarioLogado == null) {
             Toast.makeText(this, "Sessão inválida.", Toast.LENGTH_LONG).show();
-            finish(); // Fecha a tela se não houver usuário
+            finish();
             return;
         }
 
@@ -71,8 +69,7 @@ public class MinhasReservasActivity extends AppCompatActivity {
             ImageButton btnCancelar = view.findViewById(R.id.btnCancelarReserva);
 
             Laboratorio lab = ReservaRepository.getInstance().getLaboratorioById(reserva.getLaboratorioId());
-            String labName = lab != null ? lab.getNome() : reserva.getLaboratorioId();
-            tvLab.setText(labName);
+            tvLab.setText(lab != null ? lab.getNome() : reserva.getLaboratorioId());
             tvData.setText("Data: " + reserva.getData() + " - Horário: " + reserva.getHorarioFormatado());
             tvDescricao.setText("Motivo: " + reserva.getDescricao());
 
@@ -81,10 +78,11 @@ public class MinhasReservasActivity extends AppCompatActivity {
                         .setTitle("Cancelar Reserva")
                         .setMessage("Tem certeza que deseja cancelar esta reserva?")
                         .setPositiveButton("Sim, Cancelar", (dialog, which) -> {
+                            // *** Dispara a notificação de cancelamento ***
+                            NotificationHelper.notificarSobreCancelamento(getApplicationContext(), reserva);
                             reservaService.cancelarReserva(reserva.getIdReserva());
                             Toast.makeText(MinhasReservasActivity.this, "Reserva cancelada!", Toast.LENGTH_SHORT).show();
-                            notificationService.sendNotification("Reserva Cancelada", "Sua reserva para " + labName + " foi cancelada.");
-                            carregarMinhasReservas(); // Recarrega a lista
+                            carregarMinhasReservas();
                         })
                         .setNegativeButton("Não", null)
                         .show();
