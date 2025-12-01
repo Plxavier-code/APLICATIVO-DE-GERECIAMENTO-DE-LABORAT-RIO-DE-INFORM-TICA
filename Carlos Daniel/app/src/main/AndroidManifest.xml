@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AplicativoReservaDeLaboratório">
+
+        <activity
+            android:name=".ui.TermosDeUsoActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.AdminMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.NovaReservaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ListaLabsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.MinhasReservasActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.EditarReservaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.RealizarReservaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ListaEstacoesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.EditarEstacaoActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.RealizarEstacaoActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GerenciarLabsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GerenciarUsuariosActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.EditarUsuarioActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.GerenciarSoftwareActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ConsultarSenhasActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ManutencaoActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ConfirmacaoManutencaoActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.DashboardActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

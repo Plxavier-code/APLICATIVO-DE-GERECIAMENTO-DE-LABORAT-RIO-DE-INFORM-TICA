@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Layout principal do app (tela inicial) que mostra os botões de
+    "Fazer nova reserva" e "Minhas reservas".
+    Usa um DrawerLayout para o menu lateral.
+-->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <!-- Conteúdo Principal da Tela -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/white">
+
+        <!-- Toolbar (cabeçalho) customizada -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Logo do IFBA no canto direito -->
+                <ImageView
+                    android:id="@+id/logo_ifba"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/logo_ifba"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/app_name"/>
+            </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+        <!-- Seção dos Botões Centrais -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <!-- Botão Fazer nova reserva -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFazerReserva"
+                android:layout_width="250dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="#D9D9D9"
+                android:text="Fazer nova reserva"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/icon_fazer_reserva"
+                app:iconGravity="top"
+                app:iconPadding="4dp"
+                app:iconSize="48dp"
+                app:iconTint="#000000" />
+
+            <!-- Botão Minhas reservas -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMinhasReservas"
+                android:layout_width="250dp"
+                android:layout_height="120dp"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="#D9D9D9"
+                android:text="Minhas reservas"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/icon_minhas_reservas"
+                app:iconGravity="top"
+                app:iconPadding="4dp"
+                app:iconSize="48dp"
+                app:iconTint="#000000" />
+
+            <!-- Botão Solicitar Manutenção -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSolicitarManutencao"
+                android:layout_width="250dp"
+                android:layout_height="120dp"
+                android:backgroundTint="#D9D9D9"
+                android:text="Solicitar Manutenção"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/icon_fazer_reserva" 
+                app:iconGravity="top"
+                app:iconPadding="4dp"
+                app:iconSize="48dp"
+                app:iconTint="#000000" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Menu lateral -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#359A31"
+        app:itemTextColor="@android:color/white"
+        app:itemIconTint="@android:color/white"
+        app:itemShapeFillColor="#20FFFFFF"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"
+        app:itemVerticalPadding="8dp"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".ui.ManutencaoActivity">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnManutencaoLaboratorio"
+        android:layout_width="250dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="24dp"
+        android:text="Manutenção de laboratório"
+        android:textColor="@android:color/black"
+        app:icon="@android:drawable/ic_dialog_map" 
+        app:iconGravity="top" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnManutencaoEstacao"
+        android:layout_width="250dp"
+        android:layout_height="120dp"
+        android:text="Manutenção de estação"
+        android:textColor="@android:color/black"
+        app:icon="@android:drawable/ic_dialog_dialer" 
+        app:iconGravity="top" />
+
+</LinearLayout>
