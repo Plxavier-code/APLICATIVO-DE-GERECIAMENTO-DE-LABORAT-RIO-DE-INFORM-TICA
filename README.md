@@ -1,6 +1,6 @@
 # Sistema de Gerenciamento de Reservas de Laboratório
 
-**Desenvolvedor:** Osmir Santos Meira  
+**Desenvolvedor:** Osmir Santos Meira - Estrutura de Dados   
 **Módulo:** TASK-ADGLI -1_E_9 (Agendamento, Notificações e Gestão de Reservas)
 
 ---
